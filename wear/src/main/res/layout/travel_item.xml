@@ -6,22 +6,31 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Destination"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="601H | Danderyds Sj..."
+        android:fontFamily="sans-serif-condensed-light"
         android:id="@+id/Destination"
-        android:textColor="@color/black" />
+        android:textColor="@color/black"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:textSize="19dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="TimeLeft"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="22 min"
+        android:fontFamily="sans-serif-condensed-light"
         android:id="@+id/TimeLeft"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_toEndOf="@+id/Destination"
         android:gravity="right"
         android:textAlignment="gravity"
-        android:textColor="@color/black" />
+        android:textColor="@color/black"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:textSize="19dp"
+        android:layout_marginRight="2dp" />
 
 </RelativeLayout>

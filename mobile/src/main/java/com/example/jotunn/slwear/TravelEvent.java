@@ -10,6 +10,10 @@ public class TravelEvent {
     String type;
 
     public TravelEvent() {
+        lineNumber = "NOT SET";
+        location = "NOT SET";
+        departureTime = "NOT SET";
+        type ="NOT SET";
     }
 
     @Override
@@ -18,6 +22,10 @@ public class TravelEvent {
     }
 
     public TravelEvent(String lineNumber, String location, String departureTime, String type) {
+        this.location = location;
+        this.lineNumber = lineNumber;
+        this.departureTime = departureTime;
+        this.type = type;
     }
 
     public TravelEvent(String serializedString) {
@@ -62,7 +70,6 @@ public class TravelEvent {
     public void setDestination(String destination) {
         this.location = destination;
     }
-
     public void setTime(String time) {
         this.departureTime = time;
     }

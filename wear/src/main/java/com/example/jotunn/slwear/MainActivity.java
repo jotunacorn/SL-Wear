@@ -39,6 +39,8 @@ import java.util.List;
 
 public class MainActivity extends Activity implements DataApi.DataListener, MessageApi.MessageListener {
     public static String lastLocation = "";
+    private static final int LOCATION_LENGTH = 15;
+    private static final int HEADER_LENGTH = 13;
     private RelativeLayout mRectBackground;
     private RelativeLayout mRoundBackground;
     private final int textColor = Color.BLACK;
@@ -139,6 +141,7 @@ public class MainActivity extends Activity implements DataApi.DataListener, Mess
             String aRide = values.getString(i + "");
             while(aRide != null){
                 rides.add(new TravelEvent(aRide));
+                System.out.println("adding ride " + aRide);
                 i++;
                 aRide = values.getString(i + "");
             }
@@ -176,7 +179,9 @@ public class MainActivity extends Activity implements DataApi.DataListener, Mess
             String [] locations = locationsData.split("@");
             LinkedList<TravelEvent> rides = new LinkedList<TravelEvent>();
             for(int i = 0; i<locations.length; i++){
-                rides.add(new TravelEvent("", locations[i], "", ""));
+                TravelEvent anEvent = new TravelEvent("", locations[i], "", "");
+                rides.add(anEvent);
+                System.out.println("Added the event " + anEvent.toString());
             }
             rides.add(new TravelEvent("","","",""));
             adapter.addAll(rides);
@@ -217,13 +222,20 @@ public class MainActivity extends Activity implements DataApi.DataListener, Mess
             destination.setTextColor(textColor);
             final TextView time = (TextView) view.findViewById(R.id.TimeLeft);
             time.setTextColor(textColor);
-            if(rides.get(position).getLineNumber().equals("") && rides.get(position).getType().equals("")){ // It's just a location
+            if(rides.get(position) != null && rides.get(position).getLineNumber().equals("") && rides.get(position).getType().equals("")){ // It's just a location
                 destination.setText(rides.get(position).getDestination());
                 time.setText("");
                 view.setOnClickListener(new ListClick());
             }
-            else if(position<lastIndex) { //It's a complete travel event
-                String lineToSet = rides.get(position).getLineNumber() + " | " + rides.get(position).getDestination();
+            else if(rides.get(position) != null && position<lastIndex) { //It's a complete travel event
+                String destinationString = rides.get(position).getDestination();
+                String lineNumber = rides.get(position).getLineNumber();
+                if(destinationString.length() > LOCATION_LENGTH){
+                    destinationString = destinationString.substring(0, LOCATION_LENGTH-3);
+                    destinationString = destinationString + "...";
+                }
+
+                String lineToSet = lineNumber + " | " + destinationString;
                 if(lineToSet.length()<4)
                     lineToSet=" ";
                 destination.setText(lineToSet);
@@ -238,7 +250,7 @@ public class MainActivity extends Activity implements DataApi.DataListener, Mess
                                   List<TravelEvent> objects) {
             super(context, textViewResourceId, objects);
             for (int i = 0; i < objects.size(); ++i) {
-                rides.add(new TravelEvent());
+                rides.add(new TravelEvent("","","",""));
                 mIdMap.put(objects.get(i), i);
                 lastIndex++;
             }
@@ -313,7 +325,12 @@ public class MainActivity extends Activity implements DataApi.DataListener, Mess
             final TextView destination = (TextView) v.findViewById(R.id.Destination);
             System.out.println("The destination " + destination.getText() + " was pressed.");
             String message = destination.getText().toString();
-            MainActivity.lastLocation = message;
+            if(message.length()>HEADER_LENGTH){
+                MainActivity.lastLocation = message.substring(0, HEADER_LENGTH-3) + "...";
+            }
+            else {
+                MainActivity.lastLocation = message;
+            }
             sendMessageToHandHeld("GETDATA", message.getBytes());
         }
     }

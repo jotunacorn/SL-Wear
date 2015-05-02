@@ -145,7 +145,7 @@ public class DataRetreiver extends WearableListenerService implements SharedPref
         }
         @Override
         protected String doInBackground(String... params) {
-            String urlString = "https://api.trafiklab.se/samtrafiken/resrobot/StationsInZone.xml?apiVersion=2.1&centerX="+ String.format( "%.8f",location.getLongitude()) + "&centerY="+ String.format( "%.8f",location.getLatitude()) + "&radius="+ radius +"&coordSys=WGS84&key=<API_KEY>";
+            String urlString = "https://api.trafiklab.se/samtrafiken/resrobot/StationsInZone.xml?apiVersion=2.1&centerX="+ String.format( "%.8f",location.getLongitude()) + "&centerY="+ String.format( "%.8f",location.getLatitude()) + "&radius="+ radius +"&coordSys=WGS84&key=<API KEY>";
 
             String resultToDisplay = "";
             InputStream in = null;
@@ -246,7 +246,7 @@ public class DataRetreiver extends WearableListenerService implements SharedPref
         @Override
         protected String doInBackground(String... params) {
             //Get station ID
-            String urlString = "http://api.sl.se/api2/typeahead.xml?key=<API_KEY>&searchstring=" + station;
+            String urlString = "http://api.sl.se/api2/typeahead.xml?key=<API KEY>&searchstring=" + station;
             String stationID = "";
             InputStream in = null;
             System.out.println("Getting XML at " + urlString);
@@ -288,8 +288,7 @@ public class DataRetreiver extends WearableListenerService implements SharedPref
             System.out.println("The station ID for name " + station + " is " + stationID);
             //Get realtime info
              prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            urlString="http://api.sl.se/api2/realtimedepartures.xml?key=<API_KEY>&siteid="+stationID+"&timewindow="+prefs.getString("timeWindow","60");
-            //String urlString="http://api.sl.se/api2/realtimedepartures.xml?key=aad95fd854144e6393786a8f50c0c43f&siteid=9195&timewindow=40;
+            urlString="http://api.sl.se/api2/realtimedepartures.xml?key=<API KEY>&siteid="+stationID+"&timewindow="+prefs.getString("timeWindow","60");
             String resultToDisplay = "";
             in = null;
             System.out.println("Getting XML at " + urlString);
@@ -372,11 +371,12 @@ public class DataRetreiver extends WearableListenerService implements SharedPref
             while( eventType!= XmlPullParser.END_DOCUMENT) {
                 if(eventType == XmlPullParser.START_TAG) {
                     String tag = parser.getName();
-                    if((tag.equals("Metros")&&prefs.getBoolean("tunnelbana",false))|| (tag.equals("Buses")&&prefs.getBoolean("buss",false)) || (tag.equals("Trains")&&prefs.getBoolean("pendeltag",false))
-                            || (tag.equals("Trams")&&prefs.getBoolean("sparvagn",false)) || (tag.equals("Ships")&&prefs.getBoolean("bat",false))){
+                    if(tag.equals("Metros")|| tag.equals("Buses")|| (tag.equals("Trains"))
+                            || (tag.equals("Trams")) || (tag.equals("Ships"))){
                         TravelEvent nextEvent = getNextEvent(parser);
                         while(nextEvent != null){
                             rides.add(nextEvent);
+                            System.out.println("Added event " + nextEvent.toString());
                             nextEvent = getNextEvent(parser);
                         }
                     }
@@ -387,10 +387,11 @@ public class DataRetreiver extends WearableListenerService implements SharedPref
             return result;
         }
         private TravelEvent getNextEvent(XmlPullParser parser) throws IOException, XmlPullParserException {
-            int eventType = parser.next();
+            int eventType;
+            eventType = parser.next();
             String tag = parser.getName();
             TravelEvent found = new TravelEvent();
-            if(tag.equals("Metro") || tag.equals("Bus") || tag.equals("Train") || tag.equals("Tram") || tag.equals("Ship")){
+            if(tag != null && (tag.equals("Metro") || tag.equals("Bus") || tag.equals("Train") || tag.equals("Tram") || tag.equals("Ship"))){
                 eventType = parser.next();
                 while(true){
                     if(eventType == XmlPullParser.END_TAG && parser.getName()!= null && (parser.getName().equals("Metro") || parser.getName().equals("Bus") || parser.getName().equals("Train") || parser.getName().equals("Tram") || parser.getName().equals("Ship")))
